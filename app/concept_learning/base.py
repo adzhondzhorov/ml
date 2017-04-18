@@ -1,3 +1,6 @@
+from app.base import Instance
+
+
 class AllType(object):
     def __str__(self):
         return "All"
@@ -6,13 +9,6 @@ class AllType(object):
         return self.__str__()
 
 All = AllType() 
-
-
-class Instance(list):
-    target_attribute_idx = -1
-
-    def __iter__(self):
-        return (i for i in self[:self.target_attribute_idx])
 
 
 class ConceptInstance(Instance):

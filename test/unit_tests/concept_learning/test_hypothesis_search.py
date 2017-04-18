@@ -3,8 +3,8 @@ from unittest.mock import patch
 
 from app.concept_learning.base import All, Hypothesis, ConceptInstance, Instance
 from app.concept_learning.hypothesis_search import _is_attribute_constraint_satisfied, \
-    _generalize_hypothesis_by_attribute, find_s, _generalize_hypothesis, _specify_hypothesis_by_attribute, \
-    _specify_hypothesis, _is_hypothesis_consistent, candidate_elimination, _get_attribute_values_map
+    _generalize_hypothesis_by_attribute, _generalize_hypothesis, _specify_hypothesis_by_attribute, \
+    _specify_hypothesis, _is_hypothesis_consistent, _get_attribute_values_map, FindS, CandidateElimination
 
 
 class HypothesisSearchUnitTests(TestCase):
@@ -16,7 +16,8 @@ class HypothesisSearchUnitTests(TestCase):
 
         is_satisfied_mock.side_effect = [False, True] + [False, False]
         generalize_hypothesis_mock.return_value = Hypothesis([None] * 2)
-        hypothesis = find_s(instances, 3)
+        find_s = FindS(3)
+        find_s.train(instances)
 
         assert generalize_hypothesis_mock.call_count == 3
 
@@ -28,7 +29,8 @@ class HypothesisSearchUnitTests(TestCase):
 
         is_satisfied_mock.side_effect = [False, True] + [False, False]
         generalize_hypothesis_mock.return_value = Hypothesis([None] * 2)
-        hypothesis = find_s(instances, 3)
+        find_s = FindS(3)
+        find_s.train(instances)
 
         assert generalize_hypothesis_mock.call_count == 1
 
@@ -45,7 +47,10 @@ class HypothesisSearchUnitTests(TestCase):
         max_hypotheses = {Hypothesis(["val2", All]), Hypothesis([All, "val3"])}
         generalize_hypothesis_mock.return_value = min_hypotheses
         specify_hypothesis_mock.return_value = max_hypotheses
-        S, G = candidate_elimination(instances, 3)
+
+        candidate_elimination = CandidateElimination(3)
+        candidate_elimination.train(instances)
+        S, G = candidate_elimination.model
 
         assert S == min_hypotheses
         assert G == max_hypotheses
@@ -57,7 +62,10 @@ class HypothesisSearchUnitTests(TestCase):
                      ConceptInstance(["val2", "val3", False])]
 
         is_consistent_mock.side_effect = [True, True, True, True]
-        S, G = candidate_elimination(instances, 3)
+
+        candidate_elimination = CandidateElimination(3)
+        candidate_elimination.train(instances)
+        S, G = candidate_elimination.model
 
         assert S == Hypothesis([None] * 2)
         assert G == Hypothesis([All] * 2)
@@ -75,7 +83,10 @@ class HypothesisSearchUnitTests(TestCase):
         max_hypotheses = {Hypothesis(["val2", All]), Hypothesis([All, "val3"])}
         generalize_hypothesis_mock.return_value = min_hypotheses
         specify_hypothesis_mock.return_value = max_hypotheses
-        S, G = candidate_elimination(instances, 3)
+
+        candidate_elimination = CandidateElimination(3)
+        candidate_elimination.train(instances)
+        S, G = candidate_elimination.model
 
         assert S == set()
         assert G == set()
@@ -168,7 +179,6 @@ class HypothesisSearchUnitTests(TestCase):
         instance = ConceptInstance(["val1", "val2", "val3", False])
         res = _is_hypothesis_consistent(hypothesis, instance)
         assert res
-
 
     def test_get_attribute_values_map(self):
         instances = [Instance(["val1", "val2", True]),

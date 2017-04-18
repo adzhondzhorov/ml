@@ -1,12 +1,6 @@
 from unittest import TestCase
 
-from app.concept_learning.base import ConceptInstance, All, Hypothesis, Instance
-
-
-class TestInstance(TestCase):
-    def test_iter(self):
-        instance = Instance(["A", "B", True])
-        assert len(list(enumerate(instance))) == 2
+from app.concept_learning.base import ConceptInstance, All, Hypothesis
 
 
 class TestConceptInstance(TestCase):
