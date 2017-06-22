@@ -8,7 +8,7 @@ class AllType(object):
     def __repr__(self):
         return self.__str__()
 
-All = AllType() 
+All = AllType()
 
 
 class ConceptInstance(Instance):
