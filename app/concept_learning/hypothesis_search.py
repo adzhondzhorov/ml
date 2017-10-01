@@ -1,7 +1,6 @@
-from collections import defaultdict
 from typing import Dict, Iterable
 
-from app.base import LearningAlgorithm, Instance
+from app.base import LearningAlgorithm, Instance, get_attribute_values_map
 from app.concept_learning.base import Hypothesis, All, ConceptInstance
 
 
@@ -45,7 +44,7 @@ class CandidateElimination(LearningAlgorithm):
         # Initialize S to the set of maximally specific hypotheses in H
         S = {Hypothesis([None] * (self.len_attributes - 1))}
 
-        attribute_values_map = _get_attribute_values_map(instances)
+        attribute_values_map = get_attribute_values_map(instances)
 
         # For each training example d, do
         for d in instances:
@@ -179,11 +178,3 @@ def _specify_hypothesis_by_attribute(h: Hypothesis, a: object, idx: int):
             specified_h[idx] = None
 
     return specified_h
-
-
-def _get_attribute_values_map(instances):
-    values_map = defaultdict(set)
-    for instance in instances:
-        for idx, attribute in enumerate(instance):
-            values_map[idx].add(attribute)
-    return values_map

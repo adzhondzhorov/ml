@@ -4,7 +4,7 @@ from unittest.mock import patch
 from app.concept_learning.base import All, Hypothesis, ConceptInstance, Instance
 from app.concept_learning.hypothesis_search import _is_attribute_constraint_satisfied, \
     _generalize_hypothesis_by_attribute, _generalize_hypothesis, _specify_hypothesis_by_attribute, \
-    _specify_hypothesis, _is_hypothesis_consistent, _get_attribute_values_map, FindS, CandidateElimination
+    _specify_hypothesis, _is_hypothesis_consistent, FindS, CandidateElimination
 
 
 class HypothesisSearchUnitTests(TestCase):
@@ -179,11 +179,3 @@ class HypothesisSearchUnitTests(TestCase):
         instance = ConceptInstance(["val1", "val2", "val3", False])
         res = _is_hypothesis_consistent(hypothesis, instance)
         assert res
-
-    def test_get_attribute_values_map(self):
-        instances = [Instance(["val1", "val2", True]),
-                     Instance(["val2", "val2", True]),
-                     Instance(["val3", "val3", False])]
-        values_map = _get_attribute_values_map(instances)
-
-        assert values_map == {0: {"val1", "val2", "val3"}, 1: {"val2", "val3"}}

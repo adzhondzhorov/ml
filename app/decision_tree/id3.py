@@ -1,9 +1,8 @@
 import random
 from typing import Iterable
-from collections import defaultdict
 from enum import Enum 
 
-from app.base import Instance, LearningAlgorithm
+from app.base import Instance, LearningAlgorithm, get_attribute_values_map
 from app.decision_tree.base import entropy
 
 
@@ -41,7 +40,7 @@ class ID3(LearningAlgorithm):
         self.len_attributes = len_attributes
 
     def train(self, instances: Iterable[Instance]):
-        attribute_values_map = _get_attribute_values_map(instances)
+        attribute_values_map = get_attribute_values_map(instances)
           
         self._build(self.model, list(range(self.len_attributes - 1)), instances, attribute_values_map)
 
@@ -78,15 +77,7 @@ class ID3(LearningAlgorithm):
         else:
             return ID3._traverse(node.children[0], x)
             
-
-def _get_attribute_values_map(instances):
-    values_map = defaultdict(set)
-    for instance in instances:
-        for idx, attribute in enumerate(instance):
-            values_map[idx].add(attribute)
-    return values_map
-
-
+            
 def _get_best_attribute(instances, attributes, attribute_values_map):    
     return max(attributes, key=lambda attr: _information_gain(instances, attr, attribute_values_map[attr]))
 
@@ -107,16 +98,3 @@ def _get_entropy(instances):
         return 0
     positive_probability = len([i for i in instances if i[Instance.target_attribute_idx]]) / float(len(instances))
     return entropy(positive_probability)
-
-
-all_instances = (Instance(["Sunny", "Warm", "Normal", "Strong", "Warm", "Same", True]),
-             Instance(["Sunny", "Warm", "High", "Strong", "Warm", "Same", True]),
-             Instance(["Rainy", "Cold", "High", "Strong", "Warm", "Change", False]),
-             Instance(["Rainy", "Cold", "High", "Strong", "Cool", "Change", True]),
-             Instance(["Rainy", "Cold", "Normal", "Strong", "Cool", "Change", False]))
-
-id3 = ID3(len(all_instances[0]))
-id3.train(all_instances)
-
-for i in all_instances:
-    print(id3.predict(i))
