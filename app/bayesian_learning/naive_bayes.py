@@ -63,14 +63,3 @@ class NaiveBayes(LearningAlgorithm):
     @staticmethod
     def _get_count(instances: Iterable[Instance], attribute_idx: int, attribute_value: object):
         return len([instance for instance in instances if instance[attribute_idx] == attribute_value])
-    
-instances = (Instance(["Sunny", "Warm", "Normal", "Strong", "Warm", "Same", True]),
-             Instance(["Sunny", "Warm", "High", "Strong", "Warm", "Same", True]),
-             Instance(["Rainy", "Warm", "High", "Strong",
-                       "Warm", "Change", False]),
-             Instance(["Rainy", "Cold", "Normal", "Strong", "Cool", "Change", False]))
-
-nb = NaiveBayes(len(instances[0]), len(instances))
-nb.train(instances)
-for i in instances:
-    print(nb.predict(i))

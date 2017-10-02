@@ -2,7 +2,7 @@ import random
 from typing import Iterable
 from enum import Enum 
 
-from app.base import Instance, LearningAlgorithm, get_attribute_values_map
+from app.base import Instance, LearningAlgorithm, get_attribute_values_map, get_most_common_value
 from app.decision_tree.base import entropy
 
 
@@ -51,7 +51,7 @@ class ID3(LearningAlgorithm):
         elif(not any(target_values)):
 	        node.add_child(ValueNode(False))
         elif not attributes:
-            node.add_child(ValueNode(max(set(target_values), key=target_values.count)))
+            node.add_child(ValueNode(get_most_common_value(target_values)))
         else:
             attribute_idx = _get_best_attribute(instances, attributes, attribute_values_map)
             attributes.remove(attribute_idx)

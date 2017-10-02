@@ -21,3 +21,6 @@ def get_attribute_values_map(instances):
         for idx, attribute in enumerate(instance):
             values_map[idx].add(attribute)
     return values_map
+
+def get_most_common_value(values):
+    return max(set(values), key=values.count)
