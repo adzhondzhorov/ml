@@ -6,7 +6,7 @@ from app.base import Instance, LearningAlgorithm, get_most_common_value
 
 
 class WeightedMajority(LearningAlgorithm):
-    def __init__(self, learners: Iterable[LearningAlgorithm], beta: int=0.8):
+    def __init__(self, learners: Iterable[LearningAlgorithm], beta: float=0.8):
         self.learners = learners
         self.beta = beta
         self.model = {learner: 1 for learner in learners}

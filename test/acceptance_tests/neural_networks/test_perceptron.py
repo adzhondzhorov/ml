@@ -27,4 +27,3 @@ class PerceptronAcceptanceTests(TestCase):
 
         for i in instances:
             assert perceptron.predict(i) == i[Instance.target_attribute_idx]
-
