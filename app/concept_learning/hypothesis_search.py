@@ -1,7 +1,7 @@
 from typing import Dict, Iterable
 
 from app.base import LearningAlgorithm, Instance, get_attribute_values_map
-from app.concept_learning.base import Hypothesis, All, ConceptInstance
+from app.concept_learning.base import Hypothesis, All
 
 
 class FindS(LearningAlgorithm):
@@ -9,12 +9,12 @@ class FindS(LearningAlgorithm):
         self.model = None
         self.len_attributes = len_attributes
 
-    def train(self, instances: Iterable[ConceptInstance]):
+    def train(self, instances: Iterable[Instance]):
         # 1. Initialize h to the most specific hypothesis in H
         h = Hypothesis([None] * (self.len_attributes - 1))
         # 2. For each positive training instance x
         for x in instances:
-            if x.is_positive:
+            if x[Instance.target_attribute_idx]:
                 # For each attribute constraint a, in h
                 for idx, a in enumerate(h):
                     # If the constraint a, is satisfied by x
@@ -25,7 +25,7 @@ class FindS(LearningAlgorithm):
         # 3. Output hypothesis h
         self.model = h
 
-    def predict(self, instance: ConceptInstance) -> bool:
+    def predict(self, instance: Instance) -> bool:
         # classified as positive if the instance satisfies the hypothesis; otherwise - negative
         for idx, a in enumerate(self.model):
             if not _is_attribute_constraint_satisfied(instance, a, idx):
@@ -38,7 +38,7 @@ class CandidateElimination(LearningAlgorithm):
         self.model = None
         self.len_attributes = len_attributes
 
-    def train(self, instances: Iterable[ConceptInstance]):
+    def train(self, instances: Iterable[Instance]):
         # Initialize G to the set of maximally general hypotheses in H
         G = {Hypothesis([All] * (self.len_attributes - 1))}
         # Initialize S to the set of maximally specific hypotheses in H
@@ -49,7 +49,7 @@ class CandidateElimination(LearningAlgorithm):
         # For each training example d, do
         for d in instances:
             # If d is a positive example
-            if d.is_positive:
+            if d[Instance.target_attribute_idx]:
                 # Remove from G any hypothesis inconsistent with d
                 G = {g for g in G if _is_hypothesis_consistent(g, d)}
                 S_new = set(S)
@@ -87,7 +87,7 @@ class CandidateElimination(LearningAlgorithm):
 
         self.model = S, G
 
-    def predict(self, instance: ConceptInstance)-> bool:
+    def predict(self, instance: Instance)-> bool:
         S, G = self.model
 
         # classified as positive if the instance satisfies every member of S
@@ -128,11 +128,11 @@ def _is_attribute_constraint_satisfied(x: Instance, a: object, idx: int):
         return False
 
 
-def _is_hypothesis_consistent(h: Hypothesis, d: ConceptInstance):
+def _is_hypothesis_consistent(h: Hypothesis, d: Instance):
     for idx, a in enumerate(h):
         if not _is_attribute_constraint_satisfied(d, a, idx):
-            return not d.is_positive
-    return d.is_positive
+            return not d[Instance.target_attribute_idx]
+    return d[Instance.target_attribute_idx]
 
 
 def _generalize_hypothesis_by_attribute(h: Hypothesis, a: object, idx: int):
