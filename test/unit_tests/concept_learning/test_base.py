@@ -1,16 +1,6 @@
 from unittest import TestCase
 
-from app.concept_learning.base import ConceptInstance, All, Hypothesis
-
-
-class TestConceptInstance(TestCase):
-    def test_is_positive(self):
-        instance = ConceptInstance([False, False, True])
-        assert instance.is_positive
-
-    def test_is_negative(self):
-        instance = ConceptInstance([True, True, False])
-        assert not instance.is_positive
+from app.concept_learning.base import All, Hypothesis
 
 
 class TestHypothesis(TestCase):

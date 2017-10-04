@@ -11,12 +11,6 @@ class AllType(object):
 All = AllType()
 
 
-class ConceptInstance(Instance):
-    @property
-    def is_positive(self):
-        return self[self.target_attribute_idx]
-
-
 class Hypothesis(list):
     LESS = True
     GREATER = False

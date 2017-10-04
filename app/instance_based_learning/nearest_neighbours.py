@@ -3,7 +3,7 @@ from typing import Iterable
 from collections import defaultdict
 
 from app.base import Instance, LearningAlgorithm, get_most_common_value
-
+from app.instance_based_learning.base import get_distance
 
 class KNearestNeighbours(LearningAlgorithm):
     def __init__(self, k: int=4):
@@ -14,11 +14,10 @@ class KNearestNeighbours(LearningAlgorithm):
         self.model = instances
 
     def predict(self, x: Instance) -> object:
-        weighted_value_votes = defaultdict(lambda: 0)
-        for learner in self.learners:
-            weighted_value_votes[learner.predict(x)] += self.model[learner]
-        return max(weighted_value_votes)
-    
-    @staticmethod
-    def _get_distance(a: Instance, b: Instance):
-        pass
+        nearest_neighbours = self._get_nearest_neighbours(x)
+        return get_most_common_value([neighbour[Instance.target_attribute_idx] for neighbour in nearest_neighbours])
+
+    def _get_nearest_neighbours(self, x: Instance):
+        sorted_neighbours = sorted([instance for instance in self.model], key=lambda i: get_distance(i, x),
+                                   reverse=True)
+        return sorted_neighbours[:self.k]
