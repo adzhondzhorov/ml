@@ -3,7 +3,7 @@ from typing import Iterable, Set, Dict
 from collections import defaultdict
 
 from app.base import Instance, LearningAlgorithm, get_attribute_values_map, get_most_common_value
-from app.rule_based_learning.base import Rule, entropy, get_performance
+from app.rule_based_learning.base import Rule, get_performance
 
 class OneRuleBeamSearch(LearningAlgorithm):
     def __init__(self, len_attributes: int, performance_theshold: float=0.6, beam_size: int=4):

@@ -3,7 +3,7 @@ from typing import Iterable
 from enum import Enum 
 
 from app.base import Instance, LearningAlgorithm, get_attribute_values_map, get_most_common_value
-from app.decision_tree.base import entropy
+from app.base import entropy
 
 
 class Node(object):
@@ -83,18 +83,11 @@ def _get_best_attribute(instances, attributes, attribute_values_map):
 
 
 def _information_gain(instances, attribute, values):
-    all_entropy = _get_entropy(instances)
+    all_entropy = entropy(instances, lambda i: i[Instance.target_attribute_idx])
     weighted_sum = 0
     for value in values:
         value_instances = [i for i in instances if i[attribute] == value]
-        value_entropy = _get_entropy(value_instances)
+        value_entropy = entropy(value_instances, lambda i: i[Instance.target_attribute_idx])
         weighted_sum += value_entropy * len(value_instances)
 
     return all_entropy - weighted_sum / len(instances)
-
-
-def _get_entropy(instances):
-    if len(instances) == 0:
-        return 0
-    positive_probability = len([i for i in instances if i[Instance.target_attribute_idx]]) / float(len(instances))
-    return entropy(positive_probability)

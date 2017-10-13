@@ -1,7 +1,7 @@
 from typing import Iterable
 from math import log
 
-from app.base import Instance
+from app.base import Instance, entropy
 
 class Rule(list):
     def __init__(self, l):
@@ -23,14 +23,5 @@ class Rule(list):
 
 def get_performance(rule: Rule, instances: Iterable[Instance]):
     match_examples = [i for i in instances if rule.can_predict(i)]
-    if len(match_examples) == 0:
-        return 0 
-    p = len([e for e in match_examples if e[Instance.target_attribute_idx]]) /len(match_examples)
+    return -entropy(match_examples, lambda e: e[Instance.target_attribute_idx])
 
-    return -entropy(p)
-
-
-def entropy(p: float) -> float:
-    if p == 0 or p == 1:
-        return 0
-    return -p * log(p, 2) - (1-p) * log(1-p, 2) 
