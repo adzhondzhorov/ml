@@ -1,6 +1,5 @@
-from typing import Iterable
-from math import log
-
+from typing import Iterable, List
+from collections import namedtuple
 from app.base import Instance, entropy
 
 class Rule(list):
@@ -20,8 +19,15 @@ class Rule(list):
     def __hash__(self):
         return tuple(self).__hash__()
 
+Predicate = namedtuple("Predicate", "name num_arguments")
+
+class Literal(object):
+    def __init__(self, predicate: Predicate, variables:List[str]):
+        super().__init__()
+        self.predicate = predicate
+        self.variables = variables
+
 
 def get_performance(rule: Rule, instances: Iterable[Instance]):
     match_examples = [i for i in instances if rule.can_predict(i)]
     return -entropy(match_examples, lambda e: e[Instance.target_attribute_idx])
-
